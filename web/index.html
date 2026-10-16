@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101415">
+  <meta name="description" content="Measure your connection to all nine Brawlhalla regions at the same time.">
+  <title>Brawlhalla Pinger · Find your region</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23d7fb80'/%3E%3Cpath d='M8 21h4v-6H8zm6 0h4V10h-4zm6 0h4V5h-4z' fill='%23101415'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <svg class="icon-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-signal" viewBox="0 0 24 24"><path d="M4 19v-4m5 4V11m5 8V7m5 12V3"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 10a9 9 0 1 1 1 7M3 4v6h6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 17 19 3M7 3h12v12"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-11v1"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <header class="app-header">
+      <a class="brand" href="/" aria-label="Brawlhalla Pinger home">
+        <span class="brand-mark"><svg class="icon"><use href="#i-signal"/></svg></span>
+        <span class="brand-name">brawlhalla<span class="brand-divider">/</span><strong>pinger</strong></span>
+      </a>
+      <div class="header-right"><span class="local-badge"><span class="tiny-dot"></span><span id="measurement-source">TCP · 443</span></span><span class="version">v1.4</span></div>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <div><div class="eyebrow"><span></span> LESS LAG. MORE LEGENDS.</div><h1 id="page-title">Find your fastest server<span>.</span></h1><p>Nine regions. Real pings. Your connection, at a glance.</p></div>
+        <div class="session-info"><div id="session-state" class="session-state"><span class="live-dot"></span><span id="session-label">Connecting</span></div><span id="session-duration" class="session-duration">SESSION 00:00</span></div>
+      </section>
+
+      <div id="notice" class="notice" role="status" hidden><span id="notice-message"></span><button id="notice-diagnose" class="button diagnostic-button" type="button" disabled>Check connection</button></div>
+
+      <section id="diagnostics" class="diagnostics" aria-labelledby="diagnostics-heading" aria-busy="false" hidden>
+        <div class="diagnostics-heading"><h2 id="diagnostics-heading">Connection check</h2><button id="download-diagnostics" class="export-button" type="button" hidden><svg class="icon"><use href="#i-download"/></svg>Download report</button></div>
+        <p id="diagnostics-message" role="status"></p>
+        <div id="diagnostics-results" hidden>
+          <div class="diagnostics-table-wrap"><table class="diagnostics-table"><thead><tr><th scope="col">Check</th><th scope="col">Host</th><th scope="col">Result</th><th scope="col">Latency</th></tr></thead><tbody id="diagnostics-checks"></tbody></table></div>
+          <details class="raw-diagnostics"><summary>Show probe details and raw output</summary><pre id="diagnostics-raw"></pre></details>
+        </div>
+      </section>
+
+      <section class="overview" aria-label="Session overview">
+        <div class="overview-item best-overview"><div class="metric-label"><svg class="icon"><use href="#i-arrow"/></svg><span id="best-label">BEST CONNECTION</span></div><div class="overview-value"><span id="best-region">Finding region</span><span id="best-ping" class="best-ping">—</span></div><div id="best-description" class="metric-description">Comparing all nine regions</div></div>
+        <div class="overview-item"><div class="metric-label"><svg class="icon"><use href="#i-globe"/></svg><span id="online-label">ENDPOINTS OPEN</span></div><div class="overview-value"><span id="online-count">—</span><span id="online-denominator" class="value-denominator">/ 9</span></div><div id="online-description" class="metric-description">Accepting TCP connections</div></div>
+        <div class="overview-item"><div class="metric-label"><svg class="icon"><use href="#i-signal"/></svg><span id="failure-label">FAILED CONNECTIONS</span></div><div class="overview-value"><span id="total-loss">—</span><span class="value-unit">%</span></div><div id="packets-description" class="metric-description">Waiting for first connections</div></div>
+        <div class="overview-item"><div class="metric-label"><svg class="icon"><use href="#i-clock"/></svg> PROBE INTERVAL</div><div class="overview-value"><span id="interval-value">2</span><span class="value-unit">sec</span></div><div id="probe-scope-description" class="metric-description">All regions in parallel</div></div>
+      </section>
+
+      <section class="discovery-box" aria-labelledby="discovery-heading">
+        <div class="discovery-heading"><div><h2 id="discovery-heading">Find your active match endpoint</h2><p>Join an online match on this Linux computer, then find the connections used by Brawlhalla.</p></div><button id="discover-button" class="button diagnostic-button" type="button" disabled>Find game connections</button></div>
+        <p id="discovery-message" class="discovery-message" role="status">Save an observed IP to the region selected in your game. A match endpoint may not accept TCP connections on port 443 or answer ICMP.</p>
+        <div id="discovery-results" class="discovery-results" hidden></div>
+      </section>
+
+      <section class="servers-section" aria-labelledby="servers-title">
+        <div class="section-toolbar">
+          <div class="section-heading"><h2 id="servers-title">Global servers</h2><span class="count-badge">09</span></div>
+          <div class="controls">
+            <label class="select-control method-control"><svg class="icon"><use href="#i-signal"/></svg><span class="sr-only">Measurement method</span><select id="method-select" aria-label="Measurement method"><option value="tcp:443" selected>TCP · port 443</option><option value="tcp:80">TCP · port 80</option><option value="icmp">ICMP echo</option></select><svg class="icon chevron"><use href="#i-chevron"/></svg></label>
+            <label class="select-control interval-control"><svg class="icon"><use href="#i-clock"/></svg><span class="sr-only">Probe interval</span><select id="interval-select" aria-label="Probe interval"><option value="1">Every 1 sec</option><option value="2" selected>Every 2 sec</option><option value="5">Every 5 sec</option><option value="10">Every 10 sec</option></select><svg class="icon chevron"><use href="#i-chevron"/></svg></label>
+            <button id="reset-button" class="button icon-button" type="button" title="Reset session" aria-label="Reset session"><svg class="icon"><use href="#i-reset"/></svg></button>
+            <button id="toggle-button" class="button primary-button" type="button" disabled><svg class="icon"><use href="#i-pause"/></svg><span>Pause test</span></button>
+          </div>
+        </div>
+        <div class="scope-controls" role="group" aria-label="Server selection"><button id="all-servers-button" class="scope-button is-active" type="button" aria-pressed="true" disabled>All servers</button><span id="selection-summary" role="status">Click a region to test it on its own</span></div>
+        <div class="grid-toolbar"><div class="chart-caption"><span class="tiny-line"></span><span id="chart-caption">TCP CONNECT LATENCY · LAST 90 PROBES</span></div><label class="sort-control"><span>Sort by</span><select id="sort-select" aria-label="Sort servers"><option value="region">Region order</option><option value="latency">Lowest latency</option><option id="sort-failure-option" value="loss">Fewest failed connections</option></select><svg class="icon chevron"><use href="#i-chevron"/></svg></label></div>
+        <div id="server-grid" class="server-grid" aria-label="Server measurements"></div>
+        <div class="grid-footer"><div class="quality-legend" aria-label="Latency legend"><span><i class="legend-dot excellent"></i>&lt; 60 ms</span><span><i class="legend-dot good"></i>60–100 ms</span><span><i class="legend-dot fair"></i>100–160 ms</span><span><i class="legend-dot poor"></i>&gt; 160 ms</span></div><button id="export-button" class="export-button" type="button" disabled><svg class="icon"><use href="#i-download"/></svg>Export results<span class="csv-label">CSV</span></button></div>
+      </section>
+
+      <aside class="connection-note"><span class="note-icon"><svg class="icon"><use href="#i-info"/></svg></span><div><strong id="measurement-note-title">TCP connect latency to a regional endpoint.</strong><p id="source-description">Measures the time to establish a TCP connection, excluding DNS. This is a regional connection check; in-game UDP latency and packet loss may differ.</p></div><button id="diagnose-button" class="button diagnostic-button note-action" type="button" disabled>Check connection</button></aside>
+    </main>
+
+    <footer class="app-footer"><span>Built for a better connection.</span><span>Unofficial community tool<span class="footer-dot">·</span>Not affiliated with Blue Mammoth Games</span></footer>
+  </div>
+  <dialog id="target-dialog" class="target-dialog" aria-labelledby="target-dialog-heading">
+    <form id="target-form">
+      <h2 id="target-dialog-heading">Set a region’s ping target</h2>
+      <p>Use an address observed in a match, and select the same region as in the game. Saving clears measurements for this region.</p>
+      <label for="target-region">Region</label><select id="target-region" required><option value="" disabled selected>Choose a region</option><option value="us-e">US East</option><option value="us-w">US West</option><option value="eu">Europe</option><option value="sea">Southeast Asia</option><option value="aus">Australia</option><option value="brazil">Brazil</option><option value="japan">Japan</option><option value="middle-east">Middle East</option><option value="southern-africa">Southern Africa</option></select>
+      <label for="target-hostname">Hostname or IP address <span>(without a port)</span></label><input id="target-hostname" type="text" autocomplete="off" spellcheck="false" maxlength="253" required>
+      <p id="target-method-help">TCP mode needs an open service on the selected port. Match endpoints may not accept TCP 443; ICMP is available in the method selector.</p>
+      <p id="target-error" class="target-error" role="alert" hidden></p>
+      <div class="target-actions"><button id="target-default" class="button" type="button">Restore default</button><button id="target-cancel" class="button" type="button">Cancel</button><button id="target-save" class="button primary-button" type="submit">Save target</button></div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
